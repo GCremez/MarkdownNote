@@ -1,14 +1,17 @@
 package Model;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 public class Note {
     private String title;
     private String content;
-    private String date;
+    private LocalDateTime date;
 
-    public Note(String title, String content, String date) {
+    public Note(String title, String content) {
         this.title = title;
         this.content = content;
-        this.date = date;
+        this.date = LocalDateTime.now();
     }
 
     public String getTitle() {
@@ -27,11 +30,8 @@ public class Note {
         this.content = content;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
+   public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return date.format(formatter);
+   }
 }

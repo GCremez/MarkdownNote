@@ -5,21 +5,63 @@ import Model.Note;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+
+
 
 
 public class NoteManager {
-    private static void saveNote(Note note) {
-        // Implement the logic to save the note to a file
+    public static void saveNote(Note note) {
+
+        // Implement the logic to save the note to a file.
         // For example, you can use FileWriter or BufferedWriter to write the note content to a file
         // You can also use serialization to save the note object directly
 
         String fileName = sanitizeFilename(note.getTitle()) + ".md";
-        try (FileWriter writer = new FileWriter(new File(fileName))) {
+        try (FileWriter writer = new FileWriter(fileName)) {
             writer.write("# " + note.getTitle() + "\n");
-            writer.write("Created At: " + note.getFormattedDate() + "\n");
+            writer.write("Created At: " + note.getFormattedDate() + "_\n\n");
             writer.write(note.getContent());
-
+            System.out.println("✅ Note saved to " + fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("❌ Failed to save note: " + e.getMessage());
         }
     }
+
+
+    public static void listNotes() {
+        File folder = new File(".");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".md"));
+        if (files == null || files.length == 0) {
+            System.out.println("No notes found.");
+            return;
+        }
+
+        System.out.println("\n Available Notes:");
+        for (int i = 0; i < files.length; i++) {
+            System.out.println((i + 1) + ". " + files[i].getName());
+        }
+    }
+
+    public static void viewNote(String fileName) {
+        try {
+            File file = new File(fileName);
+            if (!file.exists()) {
+                System.out.println("❌ Note not found: " + fileName);
+                return;
+            }
+
+            System.out.println("Previewing" + fileName);
+            String content = new String(Files.readAllBytes(file.toPath()));
+            System.out.println(content);
+
+        } catch (IOException e) {
+            System.out.println("❌ Failed to read note: " + e.getMessage());
+        }
+    }
+
+
+    private static String sanitizeFilename(String title) {
+        return title;
+    }
+}

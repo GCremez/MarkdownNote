@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -81,6 +82,29 @@ public class NoteManager {
             }
         } catch (IOException e) {
             System.out.println("❌ Failed to update note: " + e.getMessage());
+        }
+    }
+
+    public static void searchNote(String keyboard) {
+        File folder = new File(".");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".md"));
+        boolean found = false;
+
+        for (File file : files) {
+            try {
+                String content = new String(Files.readAllBytes(file.toPath()));
+                if (content.toLowerCase().contains(keyboard
+                        .toLowerCase())) {
+                    System.out.println("Found in " + file.getName() + ": " + content);
+                    found = true;
+                }
+            } catch (IOException e) {
+                System.out.println("❌ Failed to read note: " + file.getName());
+            }
+        }
+
+        if (!found) {
+            System.out.println("No notes found containing: " + keyboard);
         }
     }
 

@@ -6,8 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-
-
+import java.util.Scanner;
 
 
 public class NoteManager {
@@ -51,7 +50,7 @@ public class NoteManager {
                 return;
             }
 
-            System.out.println("Previewing" + fileName);
+            System.out.println("Previewing " + fileName);
             String content = new String(Files.readAllBytes(file.toPath()));
             System.out.println(content);
 
@@ -61,6 +60,32 @@ public class NoteManager {
     }
 
 
+    public static void editNote(String fileName, Scanner scanner) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            System.out.println("❌ Note not found: " + fileName);
+            return;
+        }
+
+        try {
+            String oldContent = new String(Files.readAllBytes(file.toPath()));
+            System.out.println("\n Current Content:\n" + oldContent);
+            System.out.println(" Enter new content (type 'exit' to finish): ");
+            String newContent = scanner.nextLine();
+
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(oldContent.split("\n\n")[0] + "\n\n");
+                writer.write(oldContent.split("\n\n")[1] + "\n\n");
+                writer.write(newContent);
+                System.out.println("✅ Note updated successfully.");
+            }
+        } catch (IOException e) {
+            System.out.println("❌ Failed to update note: " + e.getMessage());
+        }
+    }
+
+
+    // This method can be used to sanitize the filename by removing or replacing invalid characters
     private static String sanitizeFilename(String title) {
         return title;
     }

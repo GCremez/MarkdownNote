@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -105,6 +106,40 @@ public class NoteManager {
 
         if (!found) {
             System.out.println("No notes found containing: " + keyboard);
+        }
+    }
+
+    public static void listNotesWithPreview() {
+        File folder = new File (".");
+        File[] files =  folder.listFiles((dir, name) -> name.endsWith(".md"));
+
+        if (files == null || files.length == 0) {
+            System.out.println("No notes found.");
+            return;
+        }
+
+        System.out.println("\n Available Notes:");
+        for (File file : files) {
+            try {
+                List<String> lines = Files.readAllLines(file.toPath());
+                String preview = (lines.size() >= 3) ? lines.get(2) : "No preview available";
+                System.out.println("• " + file.getName() + " → " + preview);
+            } catch (IOException e) {
+                System.out.println("❌ Failed to read note: " + file.getName());
+            }
+        }
+    }
+
+    public static void deleteNote(String fileName) {
+        File file = new File(fileName);
+        if (file.exists()) {
+            if(file.delete()) {
+                System.out.println("✅ Note deleted successfully.");
+            } else {
+                System.out.println("❌ Failed to delete note.");
+            }
+        } else {
+            System.out.println("❌ Note does not exist: " + fileName);
         }
     }
 

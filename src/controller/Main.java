@@ -14,7 +14,11 @@ public class Main {
             System.out.println("1. Create Note");
             System.out.println("2. List Notes");
             System.out.println("3. View Note");
-            System.out.println("4. Exit");
+            System.out.println("4. Edit Note");
+            System.out.println("5. Search Notes");
+            System.out.println("6. List with Previews");
+            System.out.println("7. Delete Note");
+            System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
             String choice = scanner.nextLine();
@@ -42,6 +46,29 @@ public class Main {
                     break;
 
                 case "4":
+                    System.out.print("Enter filename to edit (with .md): ");
+                    String editFile = scanner.nextLine();
+                    NoteManager.editNote(editFile, scanner);
+                    break;
+
+                case "5":
+                    System.out.print("Enter keyword to search: ");
+                    String keyword = scanner.nextLine();
+                    NoteManager.searchNote(keyword);
+                    break;
+
+                case "6":
+                    NoteManager.listNotesWithPreview();
+                    break;
+
+                case "7":
+                    System.out.print("🗑️ Enter filename to delete: ");
+                    String toDelete = scanner.nextLine();
+                    NoteManager.deleteNote(toDelete);
+                    break;
+
+
+                case "0":
                     System.out.println("Exiting Note Manager. Goodbye!");
                     scanner.close();
                     return;

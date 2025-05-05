@@ -1,6 +1,11 @@
 package controller;
 
 import service.NoteManager;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import Model.Note;
 
@@ -31,7 +36,11 @@ public class Main {
                     String title = scanner.nextLine();
                     System.out.println("Enter Note Content (type 'exit' to finish): ");
                     StringBuilder content = new StringBuilder();
-                    Note note = new Note(title, content.toString());
+                    System.out.print("🏷️ Tags (comma separated): ");
+                    List<String> tags = Arrays.asList(scanner.nextLine().split(","));
+
+
+                    Note note = new Note(title, content.toString(), tags, LocalDateTime.now());
                     NoteManager.saveNote(note);
                     break;
 
@@ -64,7 +73,7 @@ public class Main {
                 case "7":
                     System.out.print("🗑️ Enter filename to delete: ");
                     String toDelete = scanner.nextLine();
-                    NoteManager.deleteNote(toDelete);
+                    NoteManager.deleteNote(toDelete, scanner);
                     break;
 
 

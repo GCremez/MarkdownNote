@@ -12,6 +12,16 @@ import java.util.Scanner;
 
 
 public class NoteManager {
+
+    private  static final String NOTES_FOLDER = "notes";
+
+    static {
+        File folder = new File(NOTES_FOLDER);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+    }
+
     public static void saveNote(Note note) {
 
         // Implement the logic to save the note to a file.
@@ -19,10 +29,9 @@ public class NoteManager {
         // You can also use serialization to save the note object directly
 
         String fileName = sanitizeFilename(note.getTitle()) + ".md";
+        File file = new File(NOTES_FOLDER + "/" + fileName);
         try (FileWriter writer = new FileWriter(fileName)) {
-            writer.write("# " + note.getTitle() + "\n");
-            writer.write("Created At: " + note.getFormattedDate() + "_\n\n");
-            writer.write(note.getContent());
+            writer.write(note.toMarkdown());
             System.out.println("✅ Note saved to " + fileName);
         } catch (IOException e) {
             System.out.println("❌ Failed to save note: " + e.getMessage());
@@ -31,7 +40,7 @@ public class NoteManager {
 
 
     public static void listNotes() {
-        File folder = new File(".");
+        File folder = new File(NOTES_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".md"));
         if (files == null || files.length == 0) {
             System.out.println("No notes found.");
@@ -46,7 +55,7 @@ public class NoteManager {
 
     public static void viewNote(String fileName) {
         try {
-            File file = new File(fileName);
+            File file = new File(NOTES_FOLDER + "/" + fileName);
             if (!file.exists()) {
                 System.out.println("❌ Note not found: " + fileName);
                 return;
@@ -63,7 +72,7 @@ public class NoteManager {
 
 
     public static void editNote(String fileName, Scanner scanner) {
-        File file = new File(fileName);
+        File file = new File(NOTES_FOLDER + "/" + fileName);
         if (!file.exists()) {
             System.out.println("❌ Note not found: " + fileName);
             return;
@@ -87,7 +96,7 @@ public class NoteManager {
     }
 
     public static void searchNote(String keyboard) {
-        File folder = new File(".");
+        File folder = new File(NOTES_FOLDER);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".md"));
         boolean found = false;
 
@@ -110,7 +119,7 @@ public class NoteManager {
     }
 
     public static void listNotesWithPreview() {
-        File folder = new File (".");
+        File folder = new File(NOTES_FOLDER);
         File[] files =  folder.listFiles((dir, name) -> name.endsWith(".md"));
 
         if (files == null || files.length == 0) {
@@ -130,22 +139,29 @@ public class NoteManager {
         }
     }
 
-    public static void deleteNote(String fileName) {
-        File file = new File(fileName);
+    public static void deleteNote(String fileName, Scanner scanner) {
+        File file = new File(NOTES_FOLDER + "/" + fileName);
         if (file.exists()) {
-            if(file.delete()) {
-                System.out.println("✅ Note deleted successfully.");
+            System.out.println("Do you still want to delete? (yes/no): ");
+            String confirm = scanner.nextLine();
+            if (confirm.equalsIgnoreCase("yes")) {
+                if(file.delete()) {
+                    System.out.println(fileName + "deleted successfully.");
+                } else {
+                    System.out.println(fileName + " Failed to delete.");
+                }
             } else {
-                System.out.println("❌ Failed to delete note.");
+                System.out.println("Cancelled.");
             }
         } else {
-            System.out.println("❌ Note does not exist: " + fileName);
+            System.out.println(fileName + " Note does not exist");
         }
     }
 
 
     // This method can be used to sanitize the filename by removing or replacing invalid characters
     private static String sanitizeFilename(String title) {
-        return title;
+        return title.replaceAll("[^a-zA-Z0-9\\-_ ]", "").replaceAll(" ", "_");
     }
+
 }

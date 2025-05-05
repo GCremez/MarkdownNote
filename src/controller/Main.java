@@ -1,6 +1,7 @@
 package controller;
 
 import service.NoteManager;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,10 +35,21 @@ public class Main {
                 case "1":
                     System.out.print("Enter Note Title: ");
                     String title = scanner.nextLine();
+
                     System.out.println("Enter Note Content (type 'exit' to finish): ");
                     StringBuilder content = new StringBuilder();
+
+                    while (true) {
+                        String line = scanner.nextLine();
+                        if (line.equalsIgnoreCase("exit")) break;
+                        content.append(line).append("\n");
+                    }
+
                     System.out.print("🏷️ Tags (comma separated): ");
-                    List<String> tags = Arrays.asList(scanner.nextLine().split(","));
+                    List<String> tags = Arrays.stream(scanner.nextLine().split(","))
+                            .map(String::trim)
+                            .filter(tag -> !tag.isEmpty())
+                            .collect(Collectors.toList());
 
 
                     Note note = new Note(title, content.toString(), tags, LocalDateTime.now());

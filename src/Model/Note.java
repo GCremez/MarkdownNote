@@ -13,7 +13,7 @@ public class Note {
     public Note(String title, String content, List<String> tags, LocalDateTime now) {
         this.title = title;
         this.content = content;
-        this.date = LocalDateTime.now();
+        this.date = now;
         this.tags = tags;
     }
 
@@ -45,7 +45,7 @@ public class Note {
     public String toMarkdown() {
         StringBuilder sb = new StringBuilder();
         sb.append("# ").append(title).append("\n");
-        sb.append("_Created at: ").append(date).append("_\n");
+        sb.append("_Created at: ").append(getFormattedDate()).append("_\n");
         sb.append("Tags: ").append(String.join(", ", tags)).append("\n\n");
         sb.append(content);
         return sb.toString();

@@ -30,9 +30,18 @@ public class NoteManager {
 
         String fileName = sanitizeFilename(note.getTitle()) + ".md";
         File file = new File(NOTES_FOLDER + "/" + fileName);
-        try (FileWriter writer = new FileWriter(fileName)) {
+
+        // Debugging: Print the absolute path to ensure it's correct
+        System.out.println("Saving note to: " + file.getAbsolutePath());  // Debug line to check path
+
+        // Ensure folder exists
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();  // Creates the parent directory if it doesn't exist
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(note.toMarkdown());
-            System.out.println("✅ Note saved to " + fileName);
+            System.out.println("✅ Note saved to " + file.getPath());
         } catch (IOException e) {
             System.out.println("❌ Failed to save note: " + e.getMessage());
         }
@@ -82,12 +91,18 @@ public class NoteManager {
             String oldContent = new String(Files.readAllBytes(file.toPath()));
             System.out.println("\n Current Content:\n" + oldContent);
             System.out.println(" Enter new content (type 'exit' to finish): ");
-            String newContent = scanner.nextLine();
+            StringBuilder newContent = new StringBuilder();
+            while (true) {
+                String line = scanner.nextLine();
+                if (line.equalsIgnoreCase("exit")) break;
+                newContent.append(line).append("\n");
+            }
+
 
             try (FileWriter writer = new FileWriter(file)) {
                 writer.write(oldContent.split("\n\n")[0] + "\n\n");
                 writer.write(oldContent.split("\n\n")[1] + "\n\n");
-                writer.write(newContent);
+                writer.write(newContent.toString());
                 System.out.println("✅ Note updated successfully.");
             }
         } catch (IOException e) {
@@ -103,10 +118,11 @@ public class NoteManager {
         for (File file : files) {
             try {
                 String content = new String(Files.readAllBytes(file.toPath()));
-                if (content.toLowerCase().contains(keyboard
-                        .toLowerCase())) {
-                    System.out.println("Found in " + file.getName() + ": " + content);
-                    found = true;
+                for (String line : content.split("\n")) {
+                    if (line.toLowerCase().contains(keyboard.toLowerCase())) {
+                        System.out.println("🔍 Found in " + file.getName() + ": " + line);
+                        found = true;
+                    }
                 }
             } catch (IOException e) {
                 System.out.println("❌ Failed to read note: " + file.getName());
@@ -146,7 +162,7 @@ public class NoteManager {
             String confirm = scanner.nextLine();
             if (confirm.equalsIgnoreCase("yes")) {
                 if(file.delete()) {
-                    System.out.println(fileName + "deleted successfully.");
+                    System.out.println(fileName + " deleted successfully.");
                 } else {
                     System.out.println(fileName + " Failed to delete.");
                 }

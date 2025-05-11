@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -171,6 +174,30 @@ public class NoteManager {
             }
         } else {
             System.out.println(fileName + " Note does not exist");
+        }
+    }
+
+    public static void backupNotes() {
+        String date = LocalDate.now().toString();
+        Path source = Path.of(NOTES_FOLDER);
+        Path target = Path.of("backup/notes-" + date);
+
+        try {
+            Files.walk(source).forEach(path -> {
+                try {
+                    Path destination = target.resolve(source.relativize(path));
+                    if (Files.isDirectory(path)) {
+                        Files.createDirectories(destination);
+                    } else {
+                        Files.copy(path, destination, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } catch (IOException e) {
+                    System.out.println("❌ Backup error: " + e.getMessage());
+                }
+            });
+            System.out.println("✅ Backup saved to: " + target);
+        } catch (IOException e) {
+            System.out.println("❌ Failed to backup: " + e.getMessage());
         }
     }
 

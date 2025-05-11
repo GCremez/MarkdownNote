@@ -24,7 +24,9 @@ public class Main {
             System.out.println("5. Search Notes");
             System.out.println("6. List with Previews");
             System.out.println("7. Delete Note");
+            System.out.println("8. Backup Notes");
             System.out.println("0. Exit");
+
             System.out.print("Choose an option: ");
 
             String choice = scanner.nextLine();
@@ -86,6 +88,10 @@ public class Main {
                     System.out.print("🗑️ Enter filename to delete: ");
                     String toDelete = scanner.nextLine();
                     NoteManager.deleteNote(toDelete, scanner);
+                    break;
+
+                case "8":
+                    NoteManager.backupNotes();
                     break;
 
 
